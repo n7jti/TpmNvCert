@@ -10,8 +10,6 @@ GetNVCert3KPubKeyModulus(
     _Inout_ PUINT32 PubKeyModulusSize
 );
 
-
-
 int main()
 {
     std::cout << "Hello World!\n";
@@ -25,6 +23,12 @@ int main()
 	else
 	{
 		std::cout << "Failed to get EK Cert. HRESULT: " << hr << "\n";
+	}
+
+	std::cout << "EK PubKey: ";
+	for (UINT32 i = 0; i < EkCertSize; i++)
+	{
+		std::cout << std::hex << (int)EkCert[i] << " ";
 	}
 }
 
@@ -114,7 +118,7 @@ Return value:
         return HRESULT_FROM_WIN32(dwError);
     }
 
-    rsapubkey = (RSAPUBKEY*)pblob + 1;
+    rsapubkey = (RSAPUBKEY*)(pblob + 1);
     KeyOnlySize = rsapubkey->bitlen / 8;
 
 	if (*KeyModulusSize < KeyOnlySize)
@@ -126,7 +130,7 @@ Return value:
 
 	// Copy the modulus to the provided buffer
 	RtlCopyMemory(KeyModulus, rsapubkey+1, KeyOnlySize);
-    *KeyModulusSize = cblob - 1;
+    *KeyModulusSize = KeyOnlySize;
 	
 Cleanup:
 
